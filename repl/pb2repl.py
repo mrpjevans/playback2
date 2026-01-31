@@ -67,8 +67,30 @@ class MyREPL(cmd.Cmd):
         self.match("info")
         print(client.recv(4096)) 
     
+    def do_vol(self, arg):
+        if arg == '':
+            self.match(b"volume\n")
+        else:
+            client.send(f"volume {arg}\n".encode())
+        print(client.recv(4096)) 
+
+    def do_atrack(self, arg):
+        if arg == '':
+            self.match("atrack")
+        else:
+            client.send(f"atrack {arg}\n".encode())
+        print(client.recv(4096))
+
+    def do_vtrack(self, arg):
+        if arg == '':
+            self.match("vtrack")
+        else:
+            client.send(f"vtrack {arg}\n".encode())
+        print(client.recv(4096))
+    
     def do_pass(self, arg):
         client.send(f"{arg}\n".encode())  
+        print(client.recv(4096)) 
         self.ok()
 
     def do_exit(self, arg):

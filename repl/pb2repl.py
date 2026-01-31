@@ -1,0 +1,93 @@
+import socket
+import cmd
+
+# Hardcodes
+vlc_socket = "/Users/pj/vlc.sock"
+playlists_dir = "/Users/pj/Code/playback2/playlists"
+
+client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+class MyREPL(cmd.Cmd):
+    intro = 'Welcome to PlayBack2. Type help or ? to list commands.\n'
+    prompt = '🎥 '
+
+    def preloop(self):
+        try:
+            result = client.connect(vlc_socket)
+            print("Connected to VLC")
+        except Exception as e:
+            print(f"Failed to connect to VLC socket: {e}")
+            exit(1)
+        return super().preloop()
+    
+    def do_add(self, arg):
+        print("Adding file:", arg)
+        client.send(f"add {arg}\n".encode())
+        client.send(b"stop\n")
+        self.ok()
+
+    def do_pl(self, arg):
+        playlist_path = f"{playlists_dir}/{arg}.m3u"
+        print("Loading playlist:", playlist_path)
+        client.send(b"clear\n")
+        client.send(f"add {playlist_path}\n".encode())
+        client.send(b"stop\n")
+        self.ok()
+
+    def do_run(self, arg):
+        self.do_pl(arg)
+        self.do_play(arg)
+    
+    def do_restart(self, arg):
+        client.send(b"seek 0\n")
+
+    def do_cue(self, arg):
+        client.send(b"seek 0\n")
+        client.send(b"stop\n")
+        
+    def do_play(self, arg):
+        self.match("play")
+        
+    def do_pause(self, arg):
+        self.match("pause")
+
+    def do_stop(self, arg):
+        self.match("stop")
+
+    def do_clear(self, arg):
+        self.match("clear")
+
+    def do_ff(self, arg):
+        self.match("fastforward")
+                   
+    def do_rw(self, arg):
+        self.match("rewind")
+    
+    def do_info(self, arg):
+        self.match("info")
+        print(client.recv(4096)) 
+    
+    def do_pass(self, arg):
+        client.send(f"{arg}\n".encode())  
+        self.ok()
+
+    def do_exit(self, arg):
+        client.close()
+        print("Closing down")
+        return True  # Returning True exits the loop
+    
+    def match(self,cmd):
+        client.send(f"{cmd}\n".encode())
+        self.ok()
+
+    def ok(self):
+        print("OK\n")
+
+    # Aliases
+    do_pau = do_pause
+    do_p = do_pause
+    do_quit = do_exit
+    do_EOF = do_exit  # Handle Ctrl+D
+
+if __name__ == '__main__':
+    MyREPL().cmdloop()

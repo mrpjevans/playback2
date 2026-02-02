@@ -208,3 +208,5 @@ __marimo__/
 
 # Stuff
 playlists/*.m3u
+.DS_Store
+Thumbs.db

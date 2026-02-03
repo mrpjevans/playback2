@@ -141,7 +141,7 @@ class MyREPL(cmd.Cmd):
     def do_pass(self, arg):
         '''Send a raw command to VLC'''
         client.send(f"{arg}\n".encode())  
-        print(client.recv(4096).decode) 
+        print(client.recv(4096).decode()) 
 
     def do_exit(self, arg):
         '''Exit the REPL'''
@@ -152,7 +152,7 @@ class MyREPL(cmd.Cmd):
     def match(self,cmd):
         client.send(f"{cmd}\n".encode())
         if config['DEBUG'] == '1':
-            print(client.recv(4096))
+            print(client.recv(4096).decode())
 
     def postcmd(self, stop, line):
         print("OK\n")

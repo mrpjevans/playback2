@@ -22,7 +22,7 @@ if os.path.exists(env_file):
 
 # Prepare connection to VLC
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-print(config)
+
 class MyREPL(cmd.Cmd):
     intro = 'Welcome to PlayBack2. Type help or ? to list commands.\n'
     prompt = '🎥 '
@@ -55,7 +55,6 @@ class MyREPL(cmd.Cmd):
         print("Adding file:", arg)
         client.send(f"add {arg}\n".encode())
         client.send(b"stop\n")
-        self.ok()
 
     def do_load(self, arg):
         '''Load playlist from default folder by name (without .m3u extension)'''
@@ -64,7 +63,6 @@ class MyREPL(cmd.Cmd):
         client.send(b"clear\n")
         client.send(f"add {playlist_path}\n".encode())
         client.send(b"stop\n")
-        self.ok()
 
     def do_run(self, arg):
         '''Load and run the specified playlist'''
@@ -77,9 +75,9 @@ class MyREPL(cmd.Cmd):
 
     def do_cue(self, arg):
         '''Cue to the beginning of the current track and stop'''
-        client.send(b"seek 0\n")
         client.send(b"stop\n")
-        
+        client.send(b"seek 0\n")
+                
     def do_play(self, arg):
         '''Play the current track'''
         self.match("play")
@@ -91,6 +89,14 @@ class MyREPL(cmd.Cmd):
     def do_stop(self, arg):
         '''Stop playback'''
         self.match("stop")
+
+    def do_next(self, arg):
+        '''Next track'''
+        self.match("next")
+
+    def do_prev(self, arg):
+        '''Previous track'''
+        self.match("prev")
 
     def do_clear(self, arg):
         '''Clear the current playlist'''
@@ -137,7 +143,6 @@ class MyREPL(cmd.Cmd):
         '''Send a raw command to VLC'''
         client.send(f"{arg}\n".encode())  
         print(client.recv(4096)) 
-        self.ok()
 
     def do_exit(self, arg):
         '''Exit the REPL'''
@@ -149,10 +154,10 @@ class MyREPL(cmd.Cmd):
         client.send(f"{cmd}\n".encode())
         if config['DEBUG'] == '1':
             print(client.recv(4096))
-        self.ok()
 
-    def ok(self):
+    def postcmd(self, stop, line):
         print("OK\n")
+        return stop
 
     # Aliases
     do_start = do_run
@@ -165,6 +170,8 @@ class MyREPL(cmd.Cmd):
     do_pla = do_play
     do_pau = do_pause
     do_sto = do_stop
+    do_nex = do_next
+    do_pre = do_prev
     do_cle = do_clear
     do_inf = do_info
     do_atr = do_atrack

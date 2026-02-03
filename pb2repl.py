@@ -121,7 +121,6 @@ class MyREPL(cmd.Cmd):
             self.match(b"volume\n")
         else:
             client.send(f"volume {arg}\n".encode())
-        print(client.recv(4096)) 
 
     def do_atrack(self, arg):
         '''Get or set audio track. Usage: atrack [value]'''
@@ -129,7 +128,7 @@ class MyREPL(cmd.Cmd):
             self.match("atrack")
         else:
             client.send(f"atrack {arg}\n".encode())
-        print(client.recv(4096))
+        print(client.recv(4096).decode())
 
     def do_vtrack(self, arg):
         '''Get or set video track. Usage: vtrack [value]'''
@@ -137,12 +136,12 @@ class MyREPL(cmd.Cmd):
             self.match("vtrack")
         else:
             client.send(f"vtrack {arg}\n".encode())
-        print(client.recv(4096))
+        print(client.recv(4096).decode())
     
     def do_pass(self, arg):
         '''Send a raw command to VLC'''
         client.send(f"{arg}\n".encode())  
-        print(client.recv(4096)) 
+        print(client.recv(4096).decode) 
 
     def do_exit(self, arg):
         '''Exit the REPL'''

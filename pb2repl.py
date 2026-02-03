@@ -158,6 +158,11 @@ class MyREPL(cmd.Cmd):
     def postcmd(self, stop, line):
         print("OK\n")
         return stop
+    
+    def do_shutdown(self, arg):
+        '''Shutdown the computer'''
+        print("Shutting down the computer...")
+        os.system("sudo shutdown now")
 
     # Aliases
     do_start = do_run
@@ -180,6 +185,7 @@ class MyREPL(cmd.Cmd):
     do_exi = do_exit
     do_qui = do_exit
     do_sta = do_run
+    do_shu = do_shutdown
     
     # 1 Char
     do_l = do_load

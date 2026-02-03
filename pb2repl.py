@@ -2,7 +2,7 @@ import os
 import socket
 import cmd
 
-root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
+root_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Config and defaults
 config = {
@@ -12,8 +12,8 @@ config = {
 }
 
 # Minimal dotenv loader
-env_file = os.path.join(root_dir, "repl", ".env")
-print(env_file)
+env_file = os.path.join(root_dir, ".env")
+
 if os.path.exists(env_file):
     with open(env_file) as f:
         for line in f:
@@ -22,7 +22,7 @@ if os.path.exists(env_file):
 
 # Prepare connection to VLC
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
+print(config)
 class MyREPL(cmd.Cmd):
     intro = 'Welcome to PlayBack2. Type help or ? to list commands.\n'
     prompt = '🎥 '

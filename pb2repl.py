@@ -159,6 +159,11 @@ class MyREPL(cmd.Cmd):
         print("OK\n")
         return stop
     
+    def do_reboot(self, arg):
+        '''Reboot the computer'''
+        print("Rebooting the computer...")
+        os.system("sudo reboot")
+
     def do_shutdown(self, arg):
         '''Shutdown the computer'''
         print("Shutting down the computer...")
@@ -185,6 +190,7 @@ class MyREPL(cmd.Cmd):
     do_exi = do_exit
     do_qui = do_exit
     do_sta = do_run
+    do_reb = do_reboot
     do_shu = do_shutdown
     
     # 1 Char

@@ -101,6 +101,8 @@ You'll see the prompt `🎥 ` ready for commands.
 | `clear` | | Clear current playlist |
 | `ff` | | Fast forward |
 | `rw` | | Rewind |
+| `next` | | Next item in playlist |
+| `prev` | | Previous item in playlist |
 | `vol [value]` | | Get or set volume (0-320) |
 | `atrack [value]` | | Get or set audio track |
 | `vtrack [value]` | | Get or set video track |
@@ -109,6 +111,8 @@ You'll see the prompt `🎥 ` ready for commands.
 | `pass <cmd>` | | Send raw command to VLC |
 | `exit / quit` | `q` | Exit the REPL |
 | `help [cmd]` | `?` | Show help |
+| `reboot` | | Reboot |
+| `shutdown` | | Shutdown |
 
 All commands can be invoked using just the first three letters (e.g. `res` for `restart`).
 

@@ -101,6 +101,7 @@ You'll see the prompt `🎥 ` ready for commands.
 | `clear` | | Clear current playlist |
 | `ff` | | Fast forward |
 | `rw` | | Rewind |
+| `normal` | | Normal speed |
 | `seek <position>` | | Go to given position |
 | `next` | | Next item in playlist |
 | `prev` | | Previous item in playlist |
@@ -108,7 +109,6 @@ You'll see the prompt `🎥 ` ready for commands.
 | `atrack [value]` | | Get or set audio track |
 | `vtrack [value]` | | Get or set video track |
 | `info` | | Show current track info |
-| `status` | | VLC Status |
 | `add <path>` | | Add file to playlist (absolute path) |
 | `pass <cmd>` | | Send raw command to VLC |
 | `exit / quit` | `q` | Exit the REPL |

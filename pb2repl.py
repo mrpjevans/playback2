@@ -109,11 +109,15 @@ class MyREPL(cmd.Cmd):
 
     def do_ff(self, arg):
         '''Fast forward the current track'''
-        self.match("fastforward")
+        self.match("fastforward {arg}")
                    
     def do_rw(self, arg):
         '''Rewind the current track'''
-        self.match("rewind")
+        self.match("rewind {arg}")
+    
+    def do_normal(self, arg):
+        '''Set playback speed to normal'''
+        self.match("normal")
     
     def do_info(self, arg):
         '''Get info about the current track'''
@@ -169,6 +173,7 @@ class MyREPL(cmd.Cmd):
     do_pla = do_play
     do_pau = do_pause
     do_see = do_seek
+    do_nor = do_normal
     do_sto = do_stop
     do_nex = do_next
     do_pre = do_prev

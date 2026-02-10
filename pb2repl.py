@@ -31,12 +31,27 @@ class MyREPL(cmd.Cmd):
     def preloop(self):
         try:
             client.connect(config['VLC_SOCKET'])
+            client.setblocking(False)  # Set socket to non-blocking mode
             print("Connected to VLC")
         except Exception as e:
             print(f"Failed to connect to VLC socket: {e}")
             exit(1)
         return super().preloop()
     
+    def check_response(self):
+        '''Non-blocking method to check for and print socket responses'''
+        try:
+            response = client.recv(1024000).decode()
+            if response:
+                print(response, end='')
+        except BlockingIOError:
+            # No data available, which is expected in non-blocking mode
+            pass
+        except Exception as e:
+            # Handle connection errors or decoding issues
+            if config['DEBUG'] == '1':
+                print(f"Error reading response: {e}")
+        
     def do_list(self, arg):
         '''List available playlists in the default folder'''
         playlist_dir = config['PLAYLIST_DIR']
@@ -117,13 +132,11 @@ class MyREPL(cmd.Cmd):
     def do_info(self, arg):
         '''Get info about the current track'''
         self.match("info")
-        print(client.recv(1024000).decode())
     
     def do_status(self, arg):
         '''Get system status'''
         self.match("status")
-        print(client.recv(1024000).decode()) 
-
+        
     def do_vol(self, arg):
         '''Get or set volume. Usage: vol [value]'''
         if arg == '':
@@ -137,21 +150,18 @@ class MyREPL(cmd.Cmd):
             self.match("atrack")
         else:
             client.send(f"atrack {arg}\n".encode())
-        print(client.recv(1024000).decode())
-
+        
     def do_vtrack(self, arg):
         '''Get or set video track. Usage: vtrack [value]'''
         if arg == '':
             self.match("vtrack")
         else:
             client.send(f"vtrack {arg}\n".encode())
-        print(client.recv(1024000).decode())
-    
+        
     def do_pass(self, arg):
         '''Send a raw command to VLC'''
         client.send(f"{arg}\n".encode())  
-        print(client.recv(1024000).decode()) 
-
+        
     def do_exit(self, arg):
         '''Exit the REPL'''
         client.close()
@@ -160,10 +170,9 @@ class MyREPL(cmd.Cmd):
     
     def match(self,cmd):
         client.send(f"{cmd}\n".encode())
-        if config['DEBUG'] == '1':
-            print(client.recv(1024000).decode())
-
+            
     def postcmd(self, stop, line):
+        self.check_response()  # Check for any incoming socket responses
         print()
         return stop
     

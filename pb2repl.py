@@ -30,7 +30,7 @@ class MyREPL(cmd.Cmd):
     # Connect to VLC socket before starting the loop
     def preloop(self):
         try:
-            result = client.connect(config['VLC_SOCKET'])
+            client.connect(config['VLC_SOCKET'])
             print("Connected to VLC")
         except Exception as e:
             print(f"Failed to connect to VLC socket: {e}")
@@ -81,7 +81,11 @@ class MyREPL(cmd.Cmd):
     def do_play(self, arg):
         '''Play the current track'''
         self.match("play")
-        
+
+    def do_seek(self, arg):
+        '''Seek to a specific position in the current track'''
+        self.match(f"seek {arg}")
+
     def do_pause(self, arg):
         '''Toggle pause/play'''
         self.match("pause")
@@ -113,8 +117,13 @@ class MyREPL(cmd.Cmd):
     def do_info(self, arg):
         '''Get info about the current track'''
         self.match("info")
-        print(client.recv(4096)) 
+        print(client.recv(1024000).decode())
     
+    def do_status(self, arg):
+        '''Get system status'''
+        self.match("status")
+        print(client.recv(1024000).decode()) 
+
     def do_vol(self, arg):
         '''Get or set volume. Usage: vol [value]'''
         if arg == '':
@@ -128,7 +137,7 @@ class MyREPL(cmd.Cmd):
             self.match("atrack")
         else:
             client.send(f"atrack {arg}\n".encode())
-        print(client.recv(4096).decode())
+        print(client.recv(1024000).decode())
 
     def do_vtrack(self, arg):
         '''Get or set video track. Usage: vtrack [value]'''
@@ -136,12 +145,12 @@ class MyREPL(cmd.Cmd):
             self.match("vtrack")
         else:
             client.send(f"vtrack {arg}\n".encode())
-        print(client.recv(4096).decode())
+        print(client.recv(1024000).decode())
     
     def do_pass(self, arg):
         '''Send a raw command to VLC'''
         client.send(f"{arg}\n".encode())  
-        print(client.recv(4096).decode()) 
+        print(client.recv(1024000).decode()) 
 
     def do_exit(self, arg):
         '''Exit the REPL'''
@@ -152,10 +161,10 @@ class MyREPL(cmd.Cmd):
     def match(self,cmd):
         client.send(f"{cmd}\n".encode())
         if config['DEBUG'] == '1':
-            print(client.recv(4096).decode())
+            print(client.recv(1024000).decode())
 
     def postcmd(self, stop, line):
-        print("OK\n")
+        print()
         return stop
     
     def do_reboot(self, arg):
@@ -188,7 +197,7 @@ class MyREPL(cmd.Cmd):
     do_pas = do_pass
     do_exi = do_exit
     do_qui = do_exit
-    do_sta = do_run
+    do_sta = do_status
     do_reb = do_reboot
     do_shu = do_shutdown
     

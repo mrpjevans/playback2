@@ -187,6 +187,8 @@ class MyREPL(cmd.Cmd):
     do_res = do_restart
     do_pla = do_play
     do_pau = do_pause
+    do_sta = do_status
+    do_see = do_seek
     do_sto = do_stop
     do_nex = do_next
     do_pre = do_prev

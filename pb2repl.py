@@ -119,30 +119,17 @@ class MyREPL(cmd.Cmd):
         '''Get info about the current track'''
         self.match("info")
     
-    def do_status(self, arg):
-        '''Get system status'''
-        self.match("status")
-        
     def do_vol(self, arg):
-        '''Get or set volume. Usage: vol [value]'''
-        if arg == '':
-            self.match(b"volume\n")
-        else:
-            client.send(f"volume {arg}\n".encode())
+        '''Set volume. Usage: vol [value]'''
+        client.send(f"volume {arg}\n".encode())
 
     def do_atrack(self, arg):
-        '''Get or set audio track. Usage: atrack [value]'''
-        if arg == '':
-            self.match("atrack")
-        else:
-            client.send(f"atrack {arg}\n".encode())
+        '''Set audio track. Usage: atrack [value]'''
+        client.send(f"atrack {arg}\n".encode())
         
     def do_vtrack(self, arg):
-        '''Get or set video track. Usage: vtrack [value]'''
-        if arg == '':
-            self.match("vtrack")
-        else:
-            client.send(f"vtrack {arg}\n".encode())
+        '''Set video track. Usage: vtrack [value]'''
+        client.send(f"vtrack {arg}\n".encode())
         
     def do_pass(self, arg):
         '''Send a raw command to VLC'''
@@ -181,7 +168,6 @@ class MyREPL(cmd.Cmd):
     do_res = do_restart
     do_pla = do_play
     do_pau = do_pause
-    do_sta = do_status
     do_see = do_seek
     do_sto = do_stop
     do_nex = do_next
@@ -193,7 +179,6 @@ class MyREPL(cmd.Cmd):
     do_pas = do_pass
     do_exi = do_exit
     do_qui = do_exit
-    do_sta = do_status
     do_reb = do_reboot
     do_shu = do_shutdown
     

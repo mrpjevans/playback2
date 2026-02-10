@@ -1,4 +1,5 @@
 import os
+from pydoc import text
 import socket
 import cmd
 
@@ -37,20 +38,6 @@ class MyREPL(cmd.Cmd):
             print(f"Failed to connect to VLC socket: {e}")
             exit(1)
         return super().preloop()
-    
-    def check_response(self):
-        '''Non-blocking method to check for and print socket responses'''
-        try:
-            response = client.recv(1024000).decode()
-            if response:
-                print(response, end='')
-        except BlockingIOError:
-            # No data available, which is expected in non-blocking mode
-            pass
-        except Exception as e:
-            # Handle connection errors or decoding issues
-            if config['DEBUG'] == '1':
-                print(f"Error reading response: {e}")
         
     def do_list(self, arg):
         '''List available playlists in the default folder'''
@@ -63,7 +50,6 @@ class MyREPL(cmd.Cmd):
                 print(" -", pl)
         except Exception as e:
             print(f"Error listing playlists: {e}")
-        print()
 
     def do_add(self, arg):
         '''Add a file to play. Specify absolute path.'''
@@ -172,8 +158,7 @@ class MyREPL(cmd.Cmd):
         client.send(f"{cmd}\n".encode())
             
     def postcmd(self, stop, line):
-        self.check_response()  # Check for any incoming socket responses
-        print()
+        print("")
         return stop
     
     def do_reboot(self, arg):

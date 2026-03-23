@@ -116,8 +116,6 @@ You'll see the prompt `🎥 ` ready for commands.
 | `reboot` | | Reboot |
 | `shutdown` | | Shutdown |
 
-All commands can be invoked using just the first three letters (e.g. `res` for `restart`).
-
 ### Example Session
 
 ```

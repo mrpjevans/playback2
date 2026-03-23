@@ -51,15 +51,12 @@ class MyREPL(cmd.Cmd):
         except Exception as e:
             print(f"Error listing playlists: {e}")
 
-    def do_add(self, arg):
-        '''Add a file to play. Specify absolute path.'''
-        print("Adding file:", arg)
-        client.send(f"add {arg}\n".encode())
-        client.send(b"stop\n")
-
     def do_load(self, arg):
         '''Load playlist from default folder by name (without .m3u extension)'''
         playlist_path = f"{config['PLAYLIST_DIR']}/{arg}.m3u"
+        if not os.path.exists(playlist_path):
+            print(f"Playlist not found: {playlist_path}")
+            return
         print("Loading playlist:", playlist_path)
         client.send(b"clear\n")
         client.send(f"add {playlist_path}\n".encode())
@@ -76,8 +73,8 @@ class MyREPL(cmd.Cmd):
 
     def do_cue(self, arg):
         '''Cue to the beginning of the current track and stop'''
-        client.send(b"stop\n")
         client.send(b"seek 0\n")
+        client.send(b"pause\n")
                 
     def do_play(self, arg):
         '''Play the current track'''
@@ -119,9 +116,9 @@ class MyREPL(cmd.Cmd):
         '''Set playback speed to normal'''
         self.match("normal")
     
-    def do_info(self, arg):
-        '''Get info about the current track'''
-        self.match("info")
+    # def do_info(self, arg):
+    #     '''Get info about the current track'''
+    #     self.match("info")
     
     def do_vol(self, arg):
         '''Set volume. Usage: vol [value]'''
@@ -166,27 +163,7 @@ class MyREPL(cmd.Cmd):
     do_start = do_run
     do_quit = do_exit
     do_EOF = do_exit  # Handle Ctrl+D
-
-    # Abbreviations
-    do_loa = do_load
-    do_res = do_restart
-    do_pla = do_play
-    do_pau = do_pause
-    do_see = do_seek
-    do_nor = do_normal
-    do_sto = do_stop
-    do_nex = do_next
-    do_pre = do_prev
-    do_cle = do_clear
-    do_inf = do_info
-    do_atr = do_atrack
-    do_vtr = do_vtrack
-    do_pas = do_pass
-    do_exi = do_exit
-    do_qui = do_exit
-    do_reb = do_reboot
-    do_shu = do_shutdown
-    
+   
     # 1 Char
     do_l = do_load
     do_c = do_cue

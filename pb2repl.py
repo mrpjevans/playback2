@@ -1,5 +1,4 @@
 import os
-from pydoc import text
 import socket
 import cmd
 
@@ -32,7 +31,7 @@ class MyREPL(cmd.Cmd):
     def preloop(self):
         try:
             client.connect(config['VLC_SOCKET'])
-            client.setblocking(False)  # Set socket to non-blocking mode
+            client.settimeout(0.2)  # Set socket timeout to 1 second
             print("Connected to VLC")
         except Exception as e:
             print(f"Failed to connect to VLC socket: {e}")
@@ -116,9 +115,9 @@ class MyREPL(cmd.Cmd):
         '''Set playback speed to normal'''
         self.match("normal")
     
-    # def do_info(self, arg):
-    #     '''Get info about the current track'''
-    #     self.match("info")
+    def do_info(self, arg):
+        '''Get info about the current track'''
+        self.match("info")
     
     def do_vol(self, arg):
         '''Set volume. Usage: vol [value]'''
@@ -146,6 +145,8 @@ class MyREPL(cmd.Cmd):
         client.send(f"{cmd}\n".encode())
             
     def postcmd(self, stop, line):
+        if config['DEBUG'] != '0':
+            self.get_response()
         print("")
         return stop
     
@@ -159,6 +160,18 @@ class MyREPL(cmd.Cmd):
         print("Shutting down the computer...")
         os.system("sudo shutdown now")
 
+    def get_response(self):
+        buffer = ""
+        try:
+            while True:
+                data = client.recv(1024)
+                if not data:
+                    break
+                buffer += data.decode()
+        except socket.timeout:
+            pass  # Timeout is expected when no more data is available
+        print(buffer.strip())
+    
     # Aliases
     do_start = do_run
     do_quit = do_exit

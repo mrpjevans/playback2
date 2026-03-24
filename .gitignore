@@ -208,5 +208,6 @@ __marimo__/
 
 # Stuff
 playlists/*.m3u
+playlists/*.mp4
 .DS_Store
 Thumbs.db

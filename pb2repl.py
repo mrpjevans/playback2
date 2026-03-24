@@ -88,7 +88,6 @@ class MyREPL(cmd.Cmd):
     
     def default(self, line):
         '''Send unknown commands directly to VLC'''
-        print(f"Sending to VLC: {line}")
         client.send(f"{line}\n".encode())
         
     def do_exit(self, arg):

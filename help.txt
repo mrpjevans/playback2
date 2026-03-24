@@ -22,7 +22,7 @@ VLC Commands:
 | search [string]  . .  search for items in playlist (or reset search)
 | delete [X] . . . . . . . . . . . . . . . . delete item X in playlist
 | move [X][Y]  . . . . . . . . . . . . move item X in playlist after Y
-| sort key . . . . . . . . . . . . . . . . . . . . . sort the playlist
+| sort key . . . . . . . . . . . . . . . . . . . . . sort the playlistget
 | sd [sd]  . . . . . . . . . . . . . show services discovery or toggle
 | play . . . . . . . . . . . . . . . . . . . . . . . . . . play stream
 | stop . . . . . . . . . . . . . . . . . . . . . . . . . . stop stream

@@ -95,10 +95,7 @@ class MyREPL(cmd.Cmd):
         client.close()
         print("Closing down")
         return True  # Returning True exits the loop
-    
-    def match(self,cmd):
-        client.send(f"{cmd}\n".encode())
-            
+                
     def postcmd(self, stop, line):
         if stop:  # Exit was called
             return True

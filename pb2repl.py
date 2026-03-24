@@ -8,7 +8,6 @@ root_dir = os.path.dirname(os.path.abspath(__file__))
 config = {
     'VLC_SOCKET': "/tmp/vlc.sock" if 'VLC_SOCKET' not in os.environ else os.environ['VLC_SOCKET'],
     'PLAYLIST_DIR': f"{root_dir}/playlists" if 'PLAYLIST_DIR' not in os.environ else os.environ['PLAYLIST_DIR'],
-    'DEBUG': '0' if 'DEBUG' not in os.environ else os.environ['DEBUG'],
 }
 
 # Minimal dotenv loader
@@ -64,7 +63,7 @@ class MyREPL(cmd.Cmd):
     def do_run(self, arg):
         '''Load and run the specified playlist'''
         self.do_load(arg)
-        self.do_play(arg)
+        self.default("play")
     
     def do_restart(self, arg):
         '''Restart the current track from the beginning'''
@@ -74,66 +73,11 @@ class MyREPL(cmd.Cmd):
         '''Cue to the beginning of the current track and stop'''
         client.send(b"seek 0\n")
         client.send(b"pause\n")
-                
-    def do_play(self, arg):
-        '''Play the current track'''
-        self.match("play")
-
-    def do_seek(self, arg):
-        '''Seek to a specific position in the current track'''
-        self.match(f"seek {arg}")
-
-    def do_pause(self, arg):
-        '''Toggle pause/play'''
-        self.match("pause")
-
-    def do_stop(self, arg):
-        '''Stop playback'''
-        self.match("stop")
-
-    def do_next(self, arg):
-        '''Next track'''
-        self.match("next")
-
-    def do_prev(self, arg):
-        '''Previous track'''
-        self.match("prev")
-
-    def do_clear(self, arg):
-        '''Clear the current playlist'''
-        self.match("clear")
-
-    def do_ff(self, arg):
-        '''Fast forward the current track'''
-        self.match("fastforward {arg}")
-                   
-    def do_rw(self, arg):
-        '''Rewind the current track'''
-        self.match("rewind {arg}")
     
-    def do_normal(self, arg):
-        '''Set playback speed to normal'''
-        self.match("normal")
-    
-    def do_info(self, arg):
-        '''Get info about the current track'''
-        self.match("info")
-    
-    def do_vol(self, arg):
-        '''Set volume. Usage: vol [value]'''
-        client.send(f"volume {arg}\n".encode())
-
-    def do_atrack(self, arg):
-        '''Set audio track. Usage: atrack [value]'''
-        client.send(f"atrack {arg}\n".encode())
-        
-    def do_vtrack(self, arg):
-        '''Set video track. Usage: vtrack [value]'''
-        client.send(f"vtrack {arg}\n".encode())
-        
-    def do_pass(self, arg):
-        '''Send a raw command to VLC'''
-        client.send(f"{arg}\n".encode())  
+    def default(self, line):
+        '''Send unknown commands directly to VLC'''
+        print(f"Sending to VLC: {line}")
+        client.send(f"{line}\n".encode())
         
     def do_exit(self, arg):
         '''Exit the REPL'''
@@ -145,8 +89,7 @@ class MyREPL(cmd.Cmd):
         client.send(f"{cmd}\n".encode())
             
     def postcmd(self, stop, line):
-        if config['DEBUG'] != '0':
-            self.get_response()
+        self.get_response()
         print("")
         return stop
     
@@ -161,16 +104,18 @@ class MyREPL(cmd.Cmd):
         os.system("sudo shutdown now")
 
     def get_response(self):
-        buffer = ""
+        buffer = bytearray()
         try:
             while True:
                 data = client.recv(1024)
                 if not data:
                     break
-                buffer += data.decode()
+                buffer.extend(data)
         except socket.timeout:
             pass  # Timeout is expected when no more data is available
-        print(buffer.strip())
+        
+        result = buffer.decode().strip()
+        print(result)
     
     # Aliases
     do_start = do_run
@@ -178,11 +123,16 @@ class MyREPL(cmd.Cmd):
     do_EOF = do_exit  # Handle Ctrl+D
    
     # 1 Char
+    def do_p(self, arg):
+        '''Pause the current track'''
+        client.send(b"pause\n")
+    def do_s(self, arg):
+        '''Stop playback'''
+        client.send(b"stop\n")
+
     do_l = do_load
     do_c = do_cue
     do_r = do_run
-    do_p = do_pause
-    do_s = do_stop
     do_q = do_exit
 
 if __name__ == '__main__':

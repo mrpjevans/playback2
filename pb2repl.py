@@ -73,6 +73,18 @@ class MyREPL(cmd.Cmd):
         '''Cue to the beginning of the current track and stop'''
         client.send(b"seek 0\n")
         client.send(b"pause\n")
+
+    def do_help(self, arg):
+        '''Display help from help.txt'''
+        help_file = os.path.join(root_dir, "help.txt")
+        if not os.path.exists(help_file):
+            print(f"Help file not found: {help_file}")
+            return
+        try:
+            with open(help_file) as f:
+                print(f.read())
+        except Exception as e:
+            print(f"Error reading help file: {e}")
     
     def default(self, line):
         '''Send unknown commands directly to VLC'''
@@ -89,6 +101,8 @@ class MyREPL(cmd.Cmd):
         client.send(f"{cmd}\n".encode())
             
     def postcmd(self, stop, line):
+        if stop:  # Exit was called
+            return True
         self.get_response()
         print("")
         return stop

@@ -23,7 +23,32 @@ if os.path.exists(env_file):
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 class MyREPL(cmd.Cmd):
-    intro = 'Welcome to PlayBack2. Type help or ? to list commands.\n'
+    intro = """Welcome to PlayBack2. Type help or ? to list commands.
+
+Start a playlist:
+  run <playlist_name>   - Load and start playing a playlist
+
+Control playback:
+  p                    - Pause/resume playback
+  s                    - Stop playback
+  r                    - Restart the current track
+  c                    - Cue to the beginning of the current track and pause
+
+While Playing:
+  volume <0-512>     - Set volume (default 256)
+  seek <seconds>     - Seek to a specific time in the current track
+  next               - Skip to the next track
+  prev               - Go back to the previous track
+
+System:
+  reboot             - Reboot the computer
+  shutdown           - Shutdown the computer
+
+Other:
+  list                - List available playlists in the default folder
+  load <playlist_name> - Load a playlist without starting playback
+  exit                - Exit the REPL  
+"""
     prompt = '🎥 '
 
     # Connect to VLC socket before starting the loop
